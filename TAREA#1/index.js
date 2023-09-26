@@ -1,53 +1,59 @@
-productsArray = [{
-    title: 'Revesderecho Linea Premium Wool ',
-    description: 'Equilibrio perfecto entre nobleza y calidez. No te arrepentirás!  100% Lana ahora es Wool, si decides comprarlo ahora, lo recibirás como Wool.  Al finalizar tu proyecto, te sugerimos bloquearlo para que la prenda quede pareja y se luzca mejor.  Lavado: a mano sin estrujar, agua fría y secado idealmente sobre una toalla en forma horizontal.',
-    thumbnail: 'https://http2.mlstatic.com/D_NQ_NP_2X_827193-MLC46449211048_062021-F.webp',
-    price:'$4.990',
-    code: '0001',
-    stock: '100',
-}
-]
+class Product {
+    constructor(title, description, price, thumbnail, code, stock) {
 
-class ProductManager {
-
+      this.title = title,
+      this.description = description,
+      this.price = price,
+      this.thumbnail = thumbnail,
+      this.code = code,
+      this.stock = stock
+    }
+  }
+  
+  class ProductManager {
     constructor() {
-        this.product = productsArray
+      this.products = [];
+      this.lastId = 0;
+    }
+  
+    addProduct(product) {
+      if (!product.title || !product.description || !product.price || !product.thumbnail || !product.code || !product.stock) {
+        throw new Error("Todos los campos son obligatorios");
+      }
+  
+      const existingProduct = this.products.find(p => p.code === product.code);
+      if (existingProduct) {
+        throw new Error(`El código del producto ID '${product.code}' ya existe, por favor cambiar el producto '${product.description}'`);
+        
+      }
+  
+      product.id = ++this.lastId;
+      this.products.push(product);
     }
 
-    addProduct = (newProduct) => {
-        const product = this.product.find (prod => prod.code === newProduct.code);
-        if (product){
-            return 'Ya existe el producto, con ese codigo'
+    getProducts() {
+        return this.products
+      }
+
+    getProductById(id) {
+        for (let i = 0; i < this.products.length; i++) {
+          if (this.products[i].id === id) {
+            return this.products[i];
+          }
         }
-        if (this.product.length === 0){
-            this.product.push({id: 1, ...newProduct});
-        }else {
-            this.product.push ({ id: this.product[this.product.length-1].id +1, ...newProduct})
-        }
-    }
-
-    getProducts () {
-        return this.product
-    }
-
-    getProductsById (id) {
-        const object = this.product.find (element => element.i === id);
-        return object ? object : null;
-    }
-
-}
-
-const products = new ProductManager()
-
-products.addProduct({
-    title: 'Revesderecho Linea Kids Soft',
-    description: 'Aprovecha la suavidad y colores para entregársela a tus niños!',
-    thumbnail: 'https://http2.mlstatic.com/D_NQ_NP_2X_846061-MLC46943848962_082021-F.webp',
-    price: '$2.990',
-    code: '0002',
-    stock: 100
-})
-
-console.log ('Todos', products.getProducts())
-
-console.log('por id:', products.getProducts());
+        console.error('Not found');
+        return null;
+      }
+      
+  }
+  const productManager = new ProductManager();
+  try {
+    productManager.addProduct(new Product("Teclado", "Teclado Genius KB-100", 2346, "https://acortar.link/U0OvTj", 1, 9));
+    productManager.addProduct(new Product("Mouse", "Mouse Genius DX-110 USB", 1109, 'https://acortar.link/zvR6tV', 2, 10));
+    productManager.addProduct(new Product("Mouse", "Mouse Genius DX-220 PS2", 1100, 'https://acortar.link/zvR6tV', 2, 10));
+  } catch (error) {
+    console.error(error.message);
+  }
+  
+console.log(productManager.getProducts());
+console.log(productManager.getProductById(1));
